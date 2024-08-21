@@ -1,0 +1,14 @@
+--xóa hai bảng cũ chứa dữ liệu fake đi, để có thể chạy lại lệnh
+Tạo database cho project:
+- tạo model user trong model/user.js => chỉnh sửa migrations của user 
+==> xong migrations : chạy lệnh npx sequelize-cli db:migrate: để tạo table
+==> xong model và migrations đầu tiên
+===> bảng user đã được tạo mới
+
+- tạo model allCode
+==> tạo model mới là allCode.js=> tạo migration-create_allcode.js
+===> chạy lênh npx sequelize-cli db:migrate
+====>tạo bảng allcode thành công
+
+-tạo model schedule
+==> tạo model mới schedule.js=> tạo migration-create_schedule.js

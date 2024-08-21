@@ -1,0 +1,132 @@
+==> 2:00 AM 19/8/2024, HELLO WORLD VỚI NODEJS
+
+Giải thích các thư viện (dependencies): cần phải chạy câu lệnh npm install .... để tải 
+    - body-parser: dùng để viết api( giúp tối giản được các tham số từ client lên )
+    - dotenv: lấy được các tham số đã khai báo trên môi trường ( vd: process.dotenv.tên biến)
+    - ejs: view engine ( dung đề chạy được một màn hình trên phía server ( chạy html ) )
+    - express: là framework chính
+    - nodemon: dùng để tự restart server mỗi khi thay đổi 
+    - babel/core: trình biên dịch ( compiler) dịch từ code theo phiên bản cũ trở thành code js phiên bản mới 
+Quy trình tổ chức project: 
+    - tạo folder src: 
+        + tạo file server.js : dùng để chạy được server của project
+        + tạo folder Controllers
+        + tạo folder sevices:dùng các service để connect đến database
+        + tạo folder view: 
+        + tạo folder config: để cấu hình các tham số dùng cho dự án
+        + tạo folder public: chứa các file như hình ảnh, css để public ra ngoài 
+        + tạo folder route: tạo các đường đi để có thể chuyển đến các trang giống với yêu cầu
+cấu hình các tham số môi trường:
+    - tạo file .babelrc: cấu hình cho compiler ( không cần quan tâm nó chạy ra sao, chỉ cần làm nó hoạt động)
+        + việc làm thứ nhất 
+        + { "presets": ["@babel/preset-env"] }
+    - tạo file .env: chứa các biến môi trường ( không được đẩy lên github)
+        + việc làm thứ hai
+        + PORT=8080 => cổng localhost chạy server
+    - tạo file .env.example: (dùng để đẩy lên github, có thể chia sẻ project) chỉ có các biến giống .env nhưng không có dữ liệu: 
+        + việc làm thứ 3
+        + PORT= không được ghi dữ liệu ở đây 
+    - tạo file .gitinore: dùng để quy định cái này được đẩy lên github
+        + việc làm thứ 4
+        +   /node_modules
+            /vendor
+            /.idea
+            .idea/
+            => dùng để chứa cache
+            .env
+            =>nơi lưu trữ biến môi trường
+        + các folder đó là các folder sẽ không đẩy lên github
+cấu hình những thành phần của app/project: 
+    - Cấu hình view engine (  việc đầu tiên phải làm ):
+        + vào trong folder config => tạo file viewEngine.js ( phải exports )
+        + khai báo cho server biết mình dùng cái gì : 
+        let configViewEngine = (app) => {
+            app.use(express.static("./src/public"))
+            app.set("view engine", "ejs") 
+            app.set("views", "./src/view") 
+        }
+
+    - tạo route( đường đi ) cho web
+        + vào trong folder routes =>tạo file web.js (phải exports)
+        + tạo routes để in ra được đoạn hello world: 
+            let initWebRoutes = (app) => { 
+                router.get('/', (req, res) => {
+                    return res.send('hello World');
+                }) 
+                return app.use("/", router)
+            }
+    - code file server để chạy được app 
+        + => viết ở file server.js
+    - cấu hình lại package.json để chạy code: 
+        + vào script và thêm các lệnh start: 
+            . "start":"nodemon --exec ./node_modules/.bin/babel-node src/server.js"
+    - chạy lệnh npm start
+    ==> in ra được dòng Hello world
+    ===> phiên bản hiện tại do chưa có file ejs nên chưa chưa cần chạy viewEngine trong server.js 
+    ====> do đó nó sẽ chọc vào initWebRoutes và in ra hello world
+    =====> ĐÂY LÀ CẬP NHẬT CUỐI CÙNG CỦA PHẦN "HELLO WORLD VỚI NODEJS" 
+    ======> PHẦN SAU SẼ THAY ĐỔI PROJECT ĐỂ TIẾN HÀNH SẮP XẾP NÓ VỚI MÔ HÌNH MVC  ( 3:06 AM ngày 19/8/2024)
+====================================================================================================================================================
+
+== 19/8/2024, TỔ CHỨC PROJECT THEO MVC
+
+- Nội dung chính: 
+    Khi bước vào một website => tìm đến Router đầu tiên để giúp cho app biết là nó cần làm gi tiếp theo
+    hạn chế của cách viết code trước đó là thay vì viết hàm xử lý hiển thị ở ở một nơi khác và route sẽ điều hướng đến nơi đó để thực hiện xử lý hiển thị  mà chúng ta viết trực tiếp trên một route luôn 
+    điều này là không đúng. Để khắc phục tình trạng này chúng ta dùng tơi folder Controllers
+
+- vào folder controllers:
+    + tạo homeController.js:
+        .viết các hàm xử lý 
+        .phải exports nó ra
+        .tại web.js trong routes import vào : router.get('/', homeController.getHomePage) 
+        => có thể hiểu là luồng : khi người dùng truy cập vòa đường link / thì router ở web.js sẽ dẫn đến trang homeController và lấy gethomepage ra để sử dụng, từ đó có thể nhận định là chúng ta đã chuyển xử lý logic sang file controller và ở web routes chỉ có việc định hướng thôi 
+        .phân quyền ra sao, lấy dữ liệu ra sao thì đều code ở đây
+- vào folder view:
+    +tạo 1 file view tên là homepage.ejs 
+    + trong homeController dùng res.render("homepage") => sẽ ra được giao diện dựa trên html, tại sao không phải là "./view/hompage.ejs" bởi vì trong config/viewEngine.js chúng ta đã set là bất cứ file views nào cũng đều nằm trong foleder view rồi
+
+=> 19/8/2024 05:26 AM hoàn thành việc phân chia cấu trúc theo dạng MVC
+==============================================================================================================================================================
+
+19/8/2024 05:30 connect kết nối database
+
+- Cài đặt Sequelize CLI:
+    + dùng lệnh npm install --save-dev sequelize-cli@6.2.0 (2021)
+    + dùng lệnh npx sequelize-cli init: nó sẽ tạo ra 4 folder: 
+        config/config.js : nói cho chúng ta biết được cách mà chúng ta có thể connect được database
+        models : models thông thường hay dùng
+        migrations : cách chúng ta tạo bản trong database ( dùng câu lệnh trên terminal )
+        seeders:tạo dữ liệu fake
+        .trong terminal nhập cd src để vào trong folder đó và dán câu lệnh: npx sequelize-cli init
+        làm theo : 
+            - npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string 
+            => dán vào terminal nó sẽ tự tạo một model user cho chúng ta và trong folder migrations cũng có một file vừa được tạo 
+        .chạy tiếp lệnh npm install mysql2
+        .vào trong .env thêm biến NODE_ENV=development( môi trường lập trình )
+        .vào trong src/config/config.json lên sửa tên database và  password của môi trường development thành mật khẩu trog mysql workbench ( "sonlam4403")
+        .trong terminal cd vào folder src, gõ lệnh : " px sequelize-cli db:migrate " sẽ tạo ra được 2 table ví dụ trong workbench
+    + tạo một file trong folder seeder ( tức là tạo ra một dữ liệu fake với mục đích giới thiệu về sequelize)
+        . chạy lệnh này trong terminal src : npx sequelize-cli seed:generate --name demo-user
+        . copy đoạn này đưa vào hàm up trong file vừa tạo :
+            " up: (queryInterface, Sequelize) => {
+    return queryInterface.bulkInsert('Users', [
+      {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'example@example.com',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]);
+  },"
+        .lúc đó chạy tiếp đoạn lệnh : " npx sequelize-cli db:seed:all"
+        .trong database sẽ có được 1 data trong bảng user
+    + ngoài ra tạo một file .sequelizerc ở ngoài thư mục gốc để định tuyến cho các server tìm đến các file
+
+=============================================================================================================================================================
+20/8/2024: 
+Kết nối database: 
+    + Trong fodler config tạo file connectdb.js ( phải export hàm DB trong file đó ra và ở server.js thì import vào và gọi hàm DB())
+    + Tiếp đó là file config/config.js thêm dòng lệnh impore("dotenv").config()
+    + Truy cập vòa homeController tiến hành logic lấy dữ liệu ở đó
