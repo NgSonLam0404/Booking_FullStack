@@ -6,14 +6,12 @@
     <title>Test NODEJS</title>
 </head>
 
+
 <body>
     <h1>Hello world from views</h1>
     <ul>
-        <% data.forEach(user=> { %>
-            <li>ID: <%= user.id %>, Name: <%= user.firstName %>
-                        <%= user.lastName %>, Email: <%= user.email %>
-            </li>
-            <% }); %>
+        <a display="block" href="/show-crud">Show toàn bộ danh sách</a>
+        <a display="block" href="/about">About</a>
     </ul>
 
 </body>
